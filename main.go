@@ -48,7 +48,7 @@ func logJSON(handler http.Handler) http.Handler {
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello, %s!", r.URL.Path[1:])
+		fmt.Fprintf(w, "%s is bad!\n", r.Host)
 	})
 	err := http.ListenAndServe(":9090", logJSON(http.DefaultServeMux))
 	if err != nil {

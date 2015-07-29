@@ -1,0 +1,14 @@
+# http logger
+#
+# log all http requests
+
+description "http logger"
+author "Justin Azoff <JAzoff@illinois.edu>"
+ 
+start on (filesystem and net-device-up IFACE=lo)
+stop on runlevel [!2345]
+
+respawn
+respawn limit 10 5
+# cd avoids needing to set the template and cert paths
+exec su http-logger -c 'cd /etc/http-logger && /usr/bin/http-logger -log /var/log/http-logger/http.log'

@@ -11,13 +11,17 @@ $(BINARY): http-logger.go reopening_writer.go
 
 
 
-.PHONY: rpm deb
-rpm deb: $(BINARY)
-rpm deb: VERSION=$(shell ./http-logger -version)
-rpm deb: compile
-	fpm -f -s dir -t $@ -n http-logger -v $(VERSION) \
+.PHONY: rpm
+rpm: $(BINARY)
+rpm: VERSION=$(shell ./http-logger -version)
+rpm: compile
+	fpm -f -s dir -t rpm -n http-logger -v $(VERSION) \
 	--architecture native \
 	--description "An http request logger" \
+	--before-install pkg/before-install.sh \
+	--after-install pkg/after-install.sh \
+	--before-remove pkg/before-remove.sh \
 	--config-files /etc/http-logger/index.html \
 	./http-logger=/usr/bin/ \
+	./pkg/http-logger.init=/etc/init/http-logger.conf \
 	./index.html=/etc/http-logger/

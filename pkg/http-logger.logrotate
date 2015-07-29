@@ -1,0 +1,7 @@
+/var/log/http-logger/http.log {
+    compress
+    delaycompress
+    notifempty
+    daily
+    rotate 31
+}

@@ -22,6 +22,9 @@ rpm: compile
 	--after-install pkg/after-install.sh \
 	--before-remove pkg/before-remove.sh \
 	--config-files /etc/http-logger/index.html \
+	--config-files /etc/init/http-logger.conf \
+	--config-files /etc/logrotate.d/http-logger \
 	./http-logger=/usr/bin/ \
+	./index.html=/etc/http-logger/index.html \
 	./pkg/http-logger.init=/etc/init/http-logger.conf \
-	./index.html=/etc/http-logger/
+	./pkg/http-logger.logrotate=/etc/logrotate.d/http-logger

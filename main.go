@@ -2,13 +2,18 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"net/url"
+	"path"
 	"strings"
 	"time"
 )
+
+type context map[string]interface{}
 
 type request struct {
 	Timestamp  string      `json:"ts"`
@@ -46,10 +51,35 @@ func logJSON(handler http.Handler) http.Handler {
 	})
 }
 
+type blockedHandler struct {
+	templates *template.Template
+}
+
+func newBlockedHandler(templatePath string) *blockedHandler {
+	indexTemplate := path.Join(templatePath, "index.html")
+	templates := template.Must(template.ParseFiles(indexTemplate))
+	return &blockedHandler{
+		templates: templates,
+	}
+
+}
+
+func (bh *blockedHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	ctx := &context{
+		"Host": req.Host,
+	}
+	err := bh.templates.ExecuteTemplate(w, "index.html", ctx)
+	if err != nil {
+		e := fmt.Sprintf("Error rendering template: %s", err.Error())
+		http.Error(w, e, http.StatusInternalServerError)
+		return
+	}
+}
+
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "%s is bad!\n", r.Host)
-	})
+	templatePath := flag.String("template", "./", "Path to templates")
+	flag.Parse()
+	http.Handle("/", newBlockedHandler(*templatePath))
 	err := http.ListenAndServe(":9090", logJSON(http.DefaultServeMux))
 	if err != nil {
 		log.Fatal(err)

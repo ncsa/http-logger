@@ -77,7 +77,7 @@ func (bh *blockedHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	templatePath := flag.String("template", "./", "Path to templates")
+	templatePath := flag.String("template-path", "./", "Path to templates")
 	flag.Parse()
 	http.Handle("/", newBlockedHandler(*templatePath))
 	err := http.ListenAndServe(":9090", logJSON(http.DefaultServeMux))

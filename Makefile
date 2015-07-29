@@ -6,7 +6,7 @@ BINARY=http-logger
 .PHONY: compile
 compile: $(BINARY)
 
-$(BINARY): main.go reopening_writer.go
+$(BINARY): http-logger.go reopening_writer.go
 	go build
 
 

@@ -25,6 +25,7 @@ type request struct {
 	URL        string      `json:"url"`
 	Headers    http.Header `json:"headers"`
 	FormValues url.Values  `json:"formvalues"`
+	TLS        bool        `json:"tls"`
 }
 
 func logJSON(handler http.Handler) http.Handler {
@@ -42,6 +43,7 @@ func logJSON(handler http.Handler) http.Handler {
 			URL:        r.URL.String(),
 			Headers:    r.Header,
 			FormValues: r.PostForm,
+			TLS:        r.TLS != nil,
 		}
 		reqJSON, err := json.Marshal(req)
 		if err != nil {
@@ -81,7 +83,11 @@ func (bh *blockedHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 func main() {
 	addr := flag.String("addr", ":9090", "Address to bind to")
 	templatePath := flag.String("template-path", "./", "Path to templates")
-	logfile := flag.String("log", "http-logger.log", "Path to log file")
+	logfile := flag.String("log", "/dev/stdout", "Path to log file")
+
+	sslAddr := flag.String("ssl-addr", ":8443", "Address to bind to")
+	certFile := flag.String("certfile", "cert.pem", "TLS certificate file")
+	keyFile := flag.String("keyfile", "key.pem", "TLS key file")
 
 	version := flag.Bool("version", false, "print the version number and then exit")
 	flag.Parse()
@@ -95,9 +101,16 @@ func main() {
 	log.SetFlags(0)
 
 	http.Handle("/", newBlockedHandler(*templatePath))
-	log.Printf("Listening on %s\n", *addr)
-	err := http.ListenAndServe(*addr, logJSON(http.DefaultServeMux))
-	if err != nil {
+	service := logJSON(http.DefaultServeMux)
+
+	log.Printf("Listening for HTTPS on %s\n", *sslAddr)
+	go func() {
+		if err := http.ListenAndServeTLS(*sslAddr, *certFile, *keyFile, service); err != nil {
+			log.Print(err)
+		}
+	}()
+	log.Printf("Listening for HTTP  on %s\n", *addr)
+	if err := http.ListenAndServe(*addr, service); err != nil {
 		log.Fatal(err)
 	}
 }

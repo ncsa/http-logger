@@ -47,7 +47,7 @@ func logJSON(handler http.Handler) http.Handler {
 		if err != nil {
 			log.Print(err)
 		} else {
-			fmt.Println(string(reqJSON))
+			log.Println(string(reqJSON))
 		}
 		handler.ServeHTTP(w, r)
 	})
@@ -81,6 +81,8 @@ func (bh *blockedHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 func main() {
 	addr := flag.String("addr", ":9090", "Address to bind to")
 	templatePath := flag.String("template-path", "./", "Path to templates")
+	logfile := flag.String("log", "http-logger.log", "Path to log file")
+
 	version := flag.Bool("version", false, "print the version number and then exit")
 	flag.Parse()
 
@@ -88,6 +90,9 @@ func main() {
 		fmt.Println(Version)
 		return
 	}
+
+	log.SetOutput(NewReOpeningWriter(*logfile))
+	log.SetFlags(0)
 
 	http.Handle("/", newBlockedHandler(*templatePath))
 	log.Printf("Listening on %s\n", *addr)

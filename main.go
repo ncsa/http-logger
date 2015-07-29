@@ -13,6 +13,8 @@ import (
 	"time"
 )
 
+var Version string = "0.1.0"
+
 type context map[string]interface{}
 
 type request struct {
@@ -77,10 +79,19 @@ func (bh *blockedHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
+	addr := flag.String("addr", ":9090", "Address to bind to")
 	templatePath := flag.String("template-path", "./", "Path to templates")
+	version := flag.Bool("version", false, "print the version number and then exit")
 	flag.Parse()
+
+	if *version {
+		fmt.Println(Version)
+		return
+	}
+
 	http.Handle("/", newBlockedHandler(*templatePath))
-	err := http.ListenAndServe(":9090", logJSON(http.DefaultServeMux))
+	log.Printf("Listening on %s\n", *addr)
+	err := http.ListenAndServe(*addr, logJSON(http.DefaultServeMux))
 	if err != nil {
 		log.Fatal(err)
 	}

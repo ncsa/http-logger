@@ -11,4 +11,6 @@ stop on runlevel [!2345]
 respawn
 respawn limit 10 5
 # cd avoids needing to set the template and cert paths
-exec su http-logger -c 'cd /etc/http-logger && /usr/bin/http-logger -log /var/log/http-logger/http.log'
+script
+    exec su http-logger -s /bin/sh -c 'cd /etc/http-logger && /usr/bin/http-logger -log /var/log/http-logger/http.log'
+end script

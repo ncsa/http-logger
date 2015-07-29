@@ -81,7 +81,7 @@ func (bh *blockedHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	addr := flag.String("addr", ":9090", "Address to bind to")
+	addr := flag.String("addr", ":8080", "Address to bind to")
 	templatePath := flag.String("template-path", "./", "Path to templates")
 	logfile := flag.String("log", "/dev/stdout", "Path to log file")
 

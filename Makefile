@@ -16,6 +16,7 @@ rpm: $(BINARY)
 rpm: VERSION=$(shell ./http-logger -version)
 rpm: compile
 	fpm -f -s dir -t rpm -n http-logger -v $(VERSION) \
+	--iteration 2 \
 	--architecture native \
 	--description "An http request logger" \
 	--before-install pkg/before-install.sh \

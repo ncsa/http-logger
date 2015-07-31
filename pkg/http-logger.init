@@ -12,8 +12,8 @@ respawn
 respawn limit 10 5
 # cd avoids needing to set the template and cert paths
 script
-    pkill http-logger # I hate upstart.
-    sleep 1
-    pkill -9 http-logger # I hate upstart.
+    pkill http-logger || true # I hate upstart.
+    sleep 1 
+    pkill -9 http-logger || true # I hate upstart.
     exec su http-logger -s /bin/sh -c 'cd /etc/http-logger && exec /usr/bin/http-logger -log /var/log/http-logger/http.log'
 end script

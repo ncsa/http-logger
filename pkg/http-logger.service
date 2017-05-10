@@ -1,0 +1,14 @@
+[Unit]
+Description=http-logger
+After=network.target
+
+[Service]
+User=http-logger
+Group=http-logger
+Restart=on-failure
+RestartSec=10s
+WorkingDirectory=/etc/http-logger
+ExecStart=/usr/bin/http-logger -log /var/log/http-logger/http.log
+
+[Install]
+WantedBy=multi-user.target

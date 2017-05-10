@@ -1,5 +1,6 @@
 if [ $1 -eq 0 ]; then
-  /sbin/stop http-logger >/dev/null 2>&1 || true
+  systemctl disable http-logger >/dev/null || true
+  systemctl stop http-logger >/dev/null || true
   if getent passwd http-logger >/dev/null ; then
     userdel http-logger
   fi

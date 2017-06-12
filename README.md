@@ -1,7 +1,7 @@
 http-logger
 ===========
 
-HTTP Logger is a bare bones web server intended to be ran as an RPZ sinkhole.
+HTTP Logger is a bare bones web server intended to be used for an RPZ sinkhole.
 
 It only has a few features:
 
@@ -22,9 +22,9 @@ We run it as a regular unpriveleged user and use iptables to redirect 80/443 to 
 SSL Cert
 ========
 
-Browsers will hopefully not trust the certificate being used and will not be
-able to see the template if they reach the site over https.  As a workaround,
-we generate the self signed cert for
+Browsers will hopefully not trust the certificate being used and users will not
+be able to see the template if they reach the site over https.  As a
+workaround, we generate the self signed cert for
 
 	blocked-for-security-reasons-by.our.domain
 
